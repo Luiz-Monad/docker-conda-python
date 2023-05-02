@@ -12,8 +12,8 @@ $images | ForEach-Object {
         if (-not $has_docker) { Copy-Item '../../Dockerfile' '.' }
         Copy-Item '../../scripts' -Recurse -Destination '.'
 
-        $imagename = Split-Path -LeafBase $_
-        $name = $imagename
+        $name = Split-Path -LeafBase $_
+        $imagename = $name.Replace('+', '-')
         $version = Get-Content 'version'
         if ($name.Contains('+')) {
             $name = $name.Split('+')[0]
