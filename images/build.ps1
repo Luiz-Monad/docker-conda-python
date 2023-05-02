@@ -8,15 +8,19 @@ $images = Get-ChildItem . -Directory | Select-Object -exp FullName
 $images | ForEach-Object {
     Push-Location $_
     try {
-        Copy-Item '../../Dockerfile' '.'
+        $has_docker = Test-Path './Dockerfile'
+        if (-not $has_docker) { Copy-Item '../../Dockerfile' '.' }
         Copy-Item '../../scripts' -Recurse -Destination '.'
 
         $name = Split-Path -LeafBase $_
+        if ($name.Contains('--')) {
+            $name = $name.Split('--')[0]
+        }
         $version = Get-Content 'version'
         Write-Host -ForegroundColor Cyan "Creating image $($name):$version..."
 
         $ErrorActionPreference = 'Stop'
-        
+
         docker build . --tag "$name-base" --target base
         docker build . --tag "$name"
         docker tag "$($name):latest" --tag "/$docker_io_user/$($name):$version"
@@ -24,7 +28,7 @@ $images | ForEach-Object {
     }
     finally {
         Remove-Item -Recurse './scripts'
-        Remove-Item './Dockerfile'
+        if (-not $has_docker) { Remove-Item './Dockerfile' }
         Pop-Location
     }
 }
