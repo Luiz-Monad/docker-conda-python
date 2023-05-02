@@ -1,6 +1,6 @@
 Push-Location $PSScriptRoot
 
-docker run --name ssh-key --entrypoint /bin/bash python311:ssh-key -c 'ls -l /root'
+docker run --name ssh-key --entrypoint /bin/bash debian-python-gradio:base -c 'ls -l /root'
 docker container cp 'ssh-key:/root/id_rsa' .
 docker container cp 'ssh-key:/root/id_rsa.pub' .
 docker container rm ssh-key

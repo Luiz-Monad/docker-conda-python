@@ -1,0 +1,8 @@
+{
+    "watch-run.targetList": [
+        {
+            "target": "images/debian-python-gradio/**",
+            "task": "run-image-build",
+        },
+    ]
+}

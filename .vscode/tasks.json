@@ -1,0 +1,44 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [        
+        {
+            "label": "run-image-build",
+            "command": "pwsh",
+            "type": "process",
+            "args": [
+                "-file", "images/build.ps1",
+            ],
+            "group": {
+                "kind": "build"
+            },
+            "options": {
+            },
+            "presentation": {
+                "reveal": "always",
+            },
+            "problemMatcher": [],
+        },
+    ],
+    "inputs": [
+        {
+            "id": "watch-mustache-filename",
+            "type": "command",
+            "command": "watch-run.getFilename",
+            "args" : "watch-mustache"
+        },
+        {
+            "id": "watch-mustache-dirname",
+            "type": "command",
+            "command": "watch-run.getDirname",
+            "args" : "watch-mustache"
+        },
+        {
+            "id": "watch-mustache-basename",
+            "type": "command",
+            "command": "watch-run.getFilenameWithoutExtension",
+            "args" : "watch-mustache"
+        },
+    ]
+}

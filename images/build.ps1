@@ -12,18 +12,20 @@ $images | ForEach-Object {
         if (-not $has_docker) { Copy-Item '../../Dockerfile' '.' }
         Copy-Item '../../scripts' -Recurse -Destination '.'
 
-        $name = Split-Path -LeafBase $_
-        if ($name.Contains('--')) {
-            $name = $name.Split('--')[0]
-        }
+        $imagename = Split-Path -LeafBase $_
+        $name = $imagename
         $version = Get-Content 'version'
+        if ($name.Contains('+')) {
+            $name = $name.Split('+')[0]
+        }
         Write-Host -ForegroundColor Cyan "Creating image $($name):$version..."
 
         $ErrorActionPreference = 'Stop'
 
-        docker build . --tag "$name-base" --target base
-        docker build . --tag "$name"
-        docker tag "$($name):latest" --tag "/$docker_io_user/$($name):$version"
+        docker build . --tag "$imagename-base" --target base
+        docker build . --tag "$imagename"
+        docker tag "$($imagename):latest" "$docker_io_user/$($name):$version"
+        docker push "$docker_io_user/$($name):$version"
 
     }
     finally {
