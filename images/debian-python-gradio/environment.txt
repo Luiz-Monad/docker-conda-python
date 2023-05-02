@@ -1,0 +1,12 @@
+# conda env export --from-history > environment.yml
+name: env
+channels:
+  - conda-forge
+#  - defaults
+dependencies:
+#  - ucrt
+  - openssl
+#  - python311
+  - python=3.11
+  - cryptography
+prefix: env

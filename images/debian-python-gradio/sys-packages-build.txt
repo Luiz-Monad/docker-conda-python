@@ -1,0 +1,11 @@
+# basics
+bash
+ca-certificates
+# utilities
+git
+wget
+curl
+net-tools
+bzip2
+# build tools
+build-essential
