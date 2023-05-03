@@ -5,8 +5,8 @@ channels:
 #  - defaults
 dependencies:
 #  - ucrt
-  - openssl
+#  - openssl
 #  - python311
+#  - cryptography
   - python=3.11
-  - cryptography
 prefix: env

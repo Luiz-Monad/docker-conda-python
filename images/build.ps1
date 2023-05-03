@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (    
-    [Parameter()]$docker_io_user
+    [Parameter()]$docker_registry_user
 )
 Push-Location $PSScriptRoot
 
@@ -18,14 +18,20 @@ $images | ForEach-Object {
         if ($name.Contains('+')) {
             $name = $name.Split('+')[0]
         }
+        $tag = "$docker_registry_user/$($name):$version"
         Write-Host -ForegroundColor Cyan "Creating image $($name):$version..."
 
         $ErrorActionPreference = 'Stop'
 
-        docker build . --tag "$imagename-base" --target base
-        docker build . --tag "$imagename"
-        docker tag "$($imagename):latest" "$docker_io_user/$($name):$version"
-        docker push "$docker_io_user/$($name):$version"
+        docker build . --tag "$imagename-base" --target base | Out-Host
+        docker build . --tag "$imagename" | Out-Host
+        docker tag "$($imagename):latest" $tag | Out-Host
+        docker push $tag | Out-Host
+
+        Write-Output @{
+            tag = $tag
+            digest = docker inspect --format='{{json .Config.Image}}' $tag | convertfrom-json
+        }
 
     }
     finally {
