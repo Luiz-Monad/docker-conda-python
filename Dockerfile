@@ -57,5 +57,6 @@ EXPOSE 8080
 ENV PORT 8080
 
 # The user's Dockerfile must specify an entrypoint with ENTRYPOINT or CMD.
-COPY ./scripts/start.sh /scripts
+COPY *.sh /scripts
+COPY scripts/start.sh /scripts
 ENTRYPOINT ["/scripts/start.sh"]
