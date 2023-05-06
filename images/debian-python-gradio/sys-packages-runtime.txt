@@ -1,6 +1,3 @@
 # basics
 bash
 ca-certificates
-# google filesystem
-deb [signed-by=https://packages.cloud.google.com/apt/doc/apt-key.gpg] http://packages.cloud.google.com/apt gcsfuse-bionic main
-gcsfuse
