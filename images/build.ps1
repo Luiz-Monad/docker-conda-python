@@ -19,6 +19,7 @@ $images | ForEach-Object {
             $name = $name.Split('+')[0]
         }
         $tag = "$docker_registry_user/$($name):$version"
+        $build_tag = "$($imagename):latest"
         Write-Host -ForegroundColor Cyan "Creating image $($name):$version..."
 
         $ErrorActionPreference = 'Stop'
@@ -27,14 +28,14 @@ $images | ForEach-Object {
         docker build . --tag "$imagename" | Write-Information
         
         if ($docker_registry_user -ne $null) {
-            docker tag "$($imagename):latest" $tag | Write-Information
+            docker tag $build_tag $tag | Write-Information
             docker push $tag | Write-Information
         } else {
-            $tag = "$($imagename):latest"
+            $tag = $build_tag
         }
 
         Write-Output ([PSCustomObject]@{
-            tag = $tag
+            tag = $build_tag
             digest = docker inspect --format='{{json .Config.Image}}' $tag | ConvertFrom-Json
         })
 
