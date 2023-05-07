@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (    
-    [Parameter()]$docker_registry_user
+    [Parameter()]$docker_registry_user = $null
 )
 Push-Location $PSScriptRoot
 
@@ -23,15 +23,20 @@ $images | ForEach-Object {
 
         $ErrorActionPreference = 'Stop'
 
-        docker build . --tag "$imagename-base" --target base | Out-Host
-        docker build . --tag "$imagename" | Out-Host
-        docker tag "$($imagename):latest" $tag | Out-Host
-        docker push $tag | Out-Host
-
-        Write-Output @{
-            tag = $tag
-            digest = docker inspect --format='{{json .Config.Image}}' $tag | convertfrom-json
+        docker build . --tag "$imagename-base" --target base | Write-Information
+        docker build . --tag "$imagename" | Write-Information
+        
+        if ($docker_registry_user -ne $null) {
+            docker tag "$($imagename):latest" $tag | Write-Information
+            docker push $tag | Write-Information
+        } else {
+            $tag = "$($imagename):latest"
         }
+
+        Write-Output ([PSCustomObject]@{
+            tag = $tag
+            digest = docker inspect --format='{{json .Config.Image}}' $tag | ConvertFrom-Json
+        })
 
     }
     finally {

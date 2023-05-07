@@ -18,11 +18,11 @@ if ( $entrypoint ) { $args_docker += @( '--entrypoint', $entrypoint ) }
 if ( $env ) { $args_docker += ( $env | ForEach-Object { @( '--env', $_ ) } ) }
 Write-Verbose "docker args: $args_docker"
 
-if ( -not $image ) { $image = "python311:latest" }
+if ( -not $image ) { $image = "debian-python-gradio:latest" }
 Write-Verbose "image: $image"
 
 Write-Verbose "app args: $args_app"
 
-docker run --rm -it -P  @args_docker $image @args_app
+docker run --rm -it -P @args_docker $image @args_app
 
 Pop-Location

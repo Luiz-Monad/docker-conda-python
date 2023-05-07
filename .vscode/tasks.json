@@ -8,12 +8,10 @@
             "command": "pwsh",
             "type": "process",
             "args": [
-                "-file", "images/build.ps1",
+                "-command", "$InformationPreference = 'Continue'; ./images/build.ps1 | Sort-Object",
             ],
             "group": {
                 "kind": "build"
-            },
-            "options": {
             },
             "presentation": {
                 "reveal": "always",

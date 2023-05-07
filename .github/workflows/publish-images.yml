@@ -58,7 +58,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           script: |
+            $InformationPreference = 'Continue'
             $imgs = images/build.ps1 -docker_registry_user '${{ vars.REGISTRY_USERNAME }}'
+            Write-Host $imgs
             Set-ActionVariable TAGS ($imgs.tag -join " ")
             Set-ActionVariable DIGESTS ($imgs.digest -join " ")
 
