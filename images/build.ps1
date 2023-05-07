@@ -35,7 +35,7 @@ $images | ForEach-Object {
         }
 
         Write-Output ([PSCustomObject]@{
-            tag = $build_tag
+            tag = $tag
             digest = docker inspect --format='{{json .Config.Image}}' $tag | ConvertFrom-Json
         })
 
