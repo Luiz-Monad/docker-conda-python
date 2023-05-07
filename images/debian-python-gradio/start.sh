@@ -1,7 +1,7 @@
 #!/bin/bash
 ### every exit != 0 fails the script
 
-/scripts/mount-app-gcs.sh
+python /scripts/bootstrap.py
 
 # main
 if [ -z "$1" ]; then

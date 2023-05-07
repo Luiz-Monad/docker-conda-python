@@ -1,15 +1,15 @@
 {
     "watch-run.targetList": [
         {
-            "regexp": "^(?!images/.+/)(Dockerfile|.+[.]ps1|scripts/.+)$",
+            "regexp": "^(Dockerfile|.+[.]ps1|scripts/.+|images/build[.]ps1)$",
             "task": "run-image-build",
         },
         {
-            "regexp": "^images/debian-python-gradio/(.+[.]txt|version)$",
+            "regexp": "^images/debian-python-gradio/(.+[.](txt|sh|py)|version)$",
             "task": "run-image-build",
         },
         {
-            "regexp": "^images/debian-python-gradio[+]debug/(?!scripts/.+|.+[.]ps1).+$",
+            "regexp": "^images/debian-python-gradio[+]debug/(version|sshd_config|Dockerfile)$",
             "task": "run-image-build",
         },
     ]

@@ -58,5 +58,5 @@ ENV PORT 8080
 
 # The user's Dockerfile must specify an entrypoint with ENTRYPOINT or CMD.
 COPY *.sh /scripts
-COPY scripts/start.sh /scripts
+COPY *.py /scripts
 ENTRYPOINT ["/scripts/start.sh"]
