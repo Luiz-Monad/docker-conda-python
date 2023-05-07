@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
+export DEBIAN_FRONTEND=noninteractive
 
-apt-get -yq update
+apt_args='-o=Dpkg::Use-Pty=0 -qq -y'
+
+apt-get update $apt_args
 
 env_name=$1
 pkgs=""
@@ -21,7 +24,7 @@ while read -r line; do
 
     # base tools
     if [ -z "$tools" ]; then
-        apt-get install --no-install-recommends -yq curl gpg ca-certificates
+        apt-get install $apt_args --no-install-recommends curl gpg ca-certificates
         tools=1
     fi
 
@@ -41,7 +44,7 @@ while read -r line; do
   else
     # Install the package using apt-get
     pkgs="$pkgs $line" 
-    echo apt-get install --no-install-recommends -yq "$line"
+    echo apt-get install "$line"
 
   fi
 
@@ -49,14 +52,14 @@ done < "/scripts/sys-packages-$env_name.txt"
 
 # remove base tools
 if ! [ -z "$tools" ]; then
-    apt-get remove -yq curl gpg
-    apt-get -yq update
+    apt-get remove $apt_args curl gpg
+    apt-get update $apt_args
 fi
 
 # now install everything and autoclean
-apt-get install --no-install-recommends -yq $pkgs
-apt-get upgrade -yq
-apt-get -yq autoremove
+apt-get install $apt_args --no-install-recommends $pkgs
+apt-get upgrade $apt_args
+apt-get autoremove $apt_args
 
 # Remove unneeded files.
 apt-get clean
