@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+    
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -37,23 +37,29 @@ jobs:
         uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6 #v2.6.0
         with:
           cosign-release: 'v1.13.1'
-      
-      # Caches Docker images between builds
-      # https://github.com/marketplace/actions/docker-cache
-      - name: Cache Docker images.
-        uses: ScribeMD/docker-cache@0.3.3
-        with:
-          key: "docker-${{ runner.os }}"
-
+          
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Log into registry ${{ vars.REGISTRY_ADDRESS }}
         if: github.event_name != 'pull_request'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
           registry: ${{ vars.REGISTRY_ADDRESS }}
           username: ${{ vars.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_TOKEN }}
+
+      # Enable the caching utility
+      - name: Enable Buildx cache
+        uses: docker/setup-buildx-action@v1
+        with:
+          driver-opts: network=host
+  
+      # Caches Docker images between builds
+      # https://github.com/marketplace/actions/docker-cache
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.3.3
+        with:
+          key: "docker-${{ runner.os }}"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/Amadevus/pwsh-script
@@ -67,7 +73,7 @@ jobs:
             $imgs = images/build.ps1 -docker_registry_user '${{ vars.REGISTRY_USERNAME }}'
             Write-Host $imgs
             Set-ActionVariable IMGS ($imgs | ConvertTo-Json)
-
+      
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       # repository is public to avoid leaking data.  If you would like to publish

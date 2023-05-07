@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param (    
-    [Parameter()]$docker_registry_user = $null
+    [Parameter()]$docker_registry_user = $null,
+    [Parameter()][switch]$use_buildx
 )
 Push-Location $PSScriptRoot
 
@@ -24,8 +25,14 @@ $images | ForEach-Object {
 
         $ErrorActionPreference = 'Stop'
 
-        docker build . --tag "$imagename-base" --target base | Write-Information
-        docker build . --tag "$imagename" | Write-Information
+        if ($use_buildx) {
+            function docker-build { docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max @args }
+        } else {
+            function docker-build { docker build @args }
+        }
+
+        docker-build . --tag "$imagename-base" --target base | Write-Information
+        docker-build . --tag "$imagename" | Write-Information
         
         if ($docker_registry_user -ne $null) {
             docker tag $build_tag $tag | Write-Information
