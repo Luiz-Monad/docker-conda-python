@@ -3,15 +3,22 @@ param (
     [Parameter(ParameterSetName="pipe", ValueFromPipeline=$true)][string]$image,
     [Parameter()]$entrypoint,
     [Parameter()]$env,
+    [Parameter()]$mount,
     [Parameter(ValueFromRemainingArguments=$true)]$args_app
 )
 Push-Location $PSScriptRoot
 
-# $base = "c:/Users/"
-# $cwd = (Get-Item '..').FullName
-# $share = "/mnt/hgfs/Users/" + [IO.Path]::GetRelativePath($base, $cwd).Replace('\', '/')
-# $mnt = "type=bind,source=$share,target=/app,consistency=cached"
-# Write-Verbose "mount $mnt"
+if ($mount) {
+    $dm = (vmrun list | Select-String docker).Line
+    Write-Verbose "vmware $dm"
+    $share = (Split-Path $mount -LeafBase)
+    $folder = (Get-Item $mount).FullName
+    Write-Verbose "mounting $folder -> $share"
+    vmrun -T ws removeSharedFolder $dm $share
+    vmrun -T ws addSharedFolder $dm $share $folder
+    $mnt = "type=bind,source=/mnt/hgfs/$share/,target=/$share/,consistency=cached"
+    Write-Verbose "mount $mnt"
+}
 
 $args_docker = @()
 if ( $entrypoint ) { $args_docker += @( '--entrypoint', $entrypoint ) }
