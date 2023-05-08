@@ -9,8 +9,7 @@ client = storage.Client()
 
 # Get bucket reference
 bucket_id = os.environ['APP_BUCKET_ID']
-bucket_name = os.environ['APP_BUCKET_NAME']
-bucket = client.bucket(f'{bucket_id}-{bucket_name}')
+bucket = client.bucket(bucket_id)
 
 # Get blob reference and download to temp file
 blob_name = os.environ['APP_BUCKET_BLOB']
