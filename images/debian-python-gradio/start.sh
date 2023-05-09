@@ -1,7 +1,13 @@
 #!/bin/bash
 ### every exit != 0 fails the script
 
-python /scripts/bootstrap.py
+# Check if the environment variable is set to "google"
+if ! [ -z "$APP_BUCKET_CLOUD" ]; then
+    echo "Mounting app bucket..."
+
+    python /scripts/bootstrap.py $APP_BUCKET_CLOUD
+
+fi
 
 # main
 if [ -z "$1" ]; then
