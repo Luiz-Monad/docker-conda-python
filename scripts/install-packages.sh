@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+# set -xT
 export DEBIAN_FRONTEND=noninteractive
 
 apt_args='-o=Dpkg::Use-Pty=0 -qq -y'
@@ -22,6 +23,8 @@ while read -r line; do
     deb_suite="${BASH_REMATCH[3]}"
     deb_comp="${BASH_REMATCH[4]}"
 
+    deb_suite_host=$([[ "$deb_uri" =~ ^https:[/][/]([^/]+)($|[/]$|[/].+$) ]] && echo ${BASH_REMATCH[1]//./_})
+
     # base tools
     if [ -z "$tools" ]; then
         apt-get install $apt_args --no-install-recommends curl gpg ca-certificates
@@ -30,11 +33,13 @@ while read -r line; do
 
     # Download the signed-by file
     mkdir -p /etc/apt/keyrings/
-    keyring="/etc/apt/keyrings/$deb_suite.gpg"
+    keyring="/etc/apt/keyrings/$deb_suite_host.gpg"
+    echo "adding keyring $signed_by_url to $keyring"
     curl -sS "$signed_by_url" | gpg --dearmor -o "$keyring"
 
     # Save the deb command to a source.list.d file with the signed-by file path
-    source_list="/etc/apt/sources.list.d/$deb_suite.list"
+    source_list="/etc/apt/sources.list.d/$deb_suite_host.list"
+    echo "adding source $deb_uri to $source_list"
     echo "deb [signed-by=$keyring] $deb_uri $deb_suite $deb_comp" > "$source_list"
 
   elif [[ "$line" =~ ^\s*deb\s+http.* ]]; then

@@ -9,8 +9,6 @@ $images = Get-ChildItem . -Directory | Select-Object -exp FullName
 $images | ForEach-Object {
     Push-Location $_
     try {
-        $has_docker = Test-Path './Dockerfile'
-        if (-not $has_docker) { Copy-Item '../../Dockerfile' '.' }
         Copy-Item '../../scripts' -Recurse -Destination '.'
 
         $name = Split-Path -LeafBase $_
@@ -49,7 +47,6 @@ $images | ForEach-Object {
     }
     finally {
         Remove-Item -Recurse './scripts'
-        if (-not $has_docker) { Remove-Item './Dockerfile' }
         Pop-Location
     }
 }
